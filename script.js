@@ -75,10 +75,12 @@ const gameFlow = (function() {
   let _count = 0;
   const _fieldNodes = document.querySelectorAll(".field");
   for (let i = 0; i < _fieldNodes.length; i++) {
-    _fieldNodes[i].addEventListener(("click"), () => {
-      _count % 2 === 0 ? Player1.pushMarkToBoard(i) : Player2.pushMarkToBoard(i);
-      renderFunction();
-      _count++;
+    _fieldNodes[i].addEventListener(("click"), (e) => {
+      if (e.target.textContent === "") {
+        _count % 2 === 0 ? Player1.pushMarkToBoard(i) : Player2.pushMarkToBoard(i);
+        renderFunction();
+        _count++;
+      }
     })
   }
   //END OF DISPLAY FUNCTIONALITY
