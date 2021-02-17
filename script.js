@@ -12,7 +12,7 @@ const boardModule = (function() {
     return _boardArr;
   }
 
-  function getRows() {
+  function _getRows() {
     let rows = [];
     let indexes = [0, 1, 2];
     for (let i = 0; i < indexes.length; i++) {
@@ -27,7 +27,7 @@ const boardModule = (function() {
     return rows;
   }
 
-  function getColumns() {
+  function _getColumns() {
     let columns = [];
     let indexes = [0, 3, 6];
     for (let i = 0; i < indexes.length; i++) {
@@ -42,25 +42,57 @@ const boardModule = (function() {
     return columns;
   }
 
-  function getDiagonals() {
+  function _getDiagonals() {
     let diagonalA = [_boardArr[0], _boardArr[4], _boardArr[8]];
     let diagonalB = [_boardArr[2], _boardArr[4], _boardArr[6]];
     let diagonals = [diagonalA, diagonalB];
     return diagonals;
   }
   
+  function _getAll() {
+    let rows = _getRows();
+    let columns = _getColumns();
+    let diagonals = _getDiagonals();
+    let all = [rows, columns, diagonals];
+    return all;
+  }
+
+  //check if game is over (=win X or win O or tie)
+  function getGameStatus() {
+    let winX = "xxx";
+    let winO = "ooo";
+    let status;
+    let board = _getAll();
+    let boardStringified = [];
+    board.forEach((arr) => {
+      arr.forEach((subArr) => {
+        boardStringified.push(subArr.join(""));
+      })
+    })
+    let checkWinX = boardStringified.some((arr) => arr === winX);
+    let checkWinO = boardStringified.some((arr) => arr === winO);
+  
+    if (checkWinX === true) {
+      status = "x";
+    } else if (checkWinO === true) {
+      status = "o";
+    } else {
+      let checkTie = _boardArr.includes("");
+       checkTie === false ? status = "tie" : status = "not over";
+    }
+  
+    return status;
+  }
+
   return {
     setBoard,
     getBoard,
-    getRows,
-    getColumns,
-    getDiagonals
+    getGameStatus
   }
 })();
 
 //factory function for players
 const Player = (slot, name) => {
-
   const mark = (slot === 1) ? "x" : "o";
   const pushMarkToBoard = (index) => boardModule.setBoard(mark, index);
 
@@ -71,25 +103,40 @@ const Player = (slot, name) => {
   }
 }
 
+//gameflow module
 const gameFlow = (function() {
   let boardArr = boardModule.getBoard();
-  //check if game is over (=win or draw)
-  function checkGameStatus() {
-    let board = boardArr;
-    let rows = boardModule.getRows();
-    let columns = boardModule.getColumns();
-    let diagonals = boardModule.getDiagonals();
-  }
-
   //DISPLAY FUNCTIONALITY
+  //DOM render status to page
+  function _renderStatus(index) {
+    let statusDiv = document.querySelector("#status");
+    let status = boardModule.getGameStatus();
+    switch (status) {
+      case "x": 
+        statusDiv.textContent = "X wins!";
+        break;
+      case "o": 
+        statusDiv.textContent = "O wins!";
+        break;
+      case "tie":
+        statusDiv.textContent = "It's a tie!";
+        break;
+      case "not over":
+        let boardArr = boardModule.getBoard();
+        let mark = boardArr[index];
+        mark === "x" ? statusDiv.textContent = "It's O's turn!" : statusDiv.textContent = "It's X's turn!";
+        break;
+    }
+  }
   //DOM render board content to page
-  let renderFunction = function renderBoard() {
+  function _renderBoard() {
     for (let i = 0; i < boardArr.length; i++) {
       let selector = "#f" + i;
       let boardField = document.querySelector(selector);
       boardField.textContent = boardArr[i];
     }
   }
+
   //DOM click event for gameboard fields
   let _count = 0;
   const _fieldNodes = document.querySelectorAll(".field");
@@ -97,16 +144,13 @@ const gameFlow = (function() {
     _fieldNodes[i].addEventListener(("click"), (e) => {
       if (e.target.textContent === "") {
         _count % 2 === 0 ? Player1.pushMarkToBoard(i) : Player2.pushMarkToBoard(i);
-        renderFunction();
+        _renderBoard();
+        _renderStatus(i);
         _count++;
       }
     })
   }
   //END OF DISPLAY FUNCTIONALITY
-
-  return {
-    renderFunction
-  }
 })();
 
 const Player1 = Player(1, "SM");

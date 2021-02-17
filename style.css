@@ -1,84 +1,83 @@
+html, body {
+  margin: 0; height: 100%; overflow: hidden
+}
+
 body {
-    margin: 0;
-    font-family: 'Stalinist One', cursive;
-    background-color: rgb(93, 68, 114);
+  margin: 0;
+  font-family: 'Stalinist One', cursive;
+  background-color: rgb(93, 68, 114);
+  color:rgb(186, 252, 81)
+}
+
+#main {
+    display: grid;
+    grid-template-rows: 10vh 1fr;
+    grid-template-areas:
+      "header"
+      "container";
   }
   
-  #main {
-      display: grid;
-      grid-template-rows: 10vh 1fr;
-      grid-template-areas:
-        "header"
-        "container";
-    }
-    
-    #header {
-      grid-area: header;
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      color: rgb(186, 252, 81);
-    }
-    
-    #descr {
-      margin-left: 8%;
-    }
-    
-    #container {
-      grid-area: container;
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 20vh 1fr 1fr;
-      grid-template-areas:
-        ". . ."
-        ". board ."
-        ". . .";
-      align-items: center;
-      justify-items: center;
-    }
-    
-    #board {
-      grid-area: board;
-      display: flex;
-      flex-wrap: wrap;
-      width: 40vw;
-      height: 40vh;
-      place-content: center;
-    }
-    
-    .field {
-      display: grid;
-      place-content: center;
-      border: solid;
-      border-color: rgb(186, 252, 81);
-      color:rgb(186, 252, 81);
-      width: 10vw;
-      height: 10vh;
-      font-size: 4em;
-    }
+  #header {
+    grid-area: header;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    color: rgb(186, 252, 81);
+  }
+  
+  #descr {
+    margin-left: 8%;
+  }
+  
+  #container {
+    grid-area: container;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 20vh 1fr 1fr;
+    grid-template-areas:
+      ". status ."
+      ". board ."
+      ". . .";
+    align-items: center;
+    justify-items: center;
+  }
+  
+  #status {
+    grid-area: status;
+    font-size: 4em;
+  }
 
-    .mark {
-      opacity: 0.0;
-      animation: fadeIn ease 2s;
-      -webkit-animation: fadeIn ease 2s;
-    }
+  #board {
+    grid-area: board;
+    display: flex;
+    flex-wrap: wrap;
+    width: 40vw;
+    height: 40vh;
+    place-content: center;
+  }
+  
+  .field {
+    display: grid;
+    place-content: center;
+    border: solid;
+    border-color: rgb(186, 252, 81);
+    color:rgb(186, 252, 81);
+    width: 10vw;
+    height: 10vh;
+    font-size: 4em;
+  }
 
-    @keyframes fadeIn {
-      0% {opacity:0;}
-      100% {opacity:1;}
-    }
-  
-    #f0, #f3, #f6 {
-      border-left: none;
-    }
-  
-    #f2, #f5, #f8 {
-      border-right: none;
-    }
-  
-    #f0, #f1, #f2 {
-      border-top: none;
-    }
-  
-    #f6, #f7, #f8 {
-      border-bottom: none;
-    }
+  #f0, #f3, #f6 {
+    border-left: none;
+  }
+
+  #f2, #f5, #f8 {
+    border-right: none;
+  }
+
+  #f0, #f1, #f2 {
+    border-top: none;
+  }
+
+  #f6, #f7, #f8 {
+    border-bottom: none;
+  }
