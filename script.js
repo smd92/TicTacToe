@@ -128,13 +128,13 @@ const gameFlow = (function() {
         break;
     }
   }
+
   //DOM render board content to page
-  function _renderBoard() {
-    for (let i = 0; i < boardArr.length; i++) {
-      let selector = "#f" + i;
-      let boardField = document.querySelector(selector);
-      boardField.textContent = boardArr[i];
-    }
+  function _renderBoard(index) {
+    let selector = "#f" + index;
+    let boardField = document.querySelector(selector);
+    boardField.firstElementChild.classList.add("fadeMark");
+    boardField.firstElementChild.textContent = boardArr[index];
   }
 
   //DOM click event for gameboard fields
@@ -142,12 +142,13 @@ const gameFlow = (function() {
   const _fieldNodes = document.querySelectorAll(".field");
   for (let i = 0; i < _fieldNodes.length; i++) {
     _fieldNodes[i].addEventListener(("click"), (e) => {
-      if (e.target.textContent === "") {
+      let status = boardModule.getGameStatus();
+      if (e.target.textContent === "" && status === "not over") {
         _count % 2 === 0 ? Player1.pushMarkToBoard(i) : Player2.pushMarkToBoard(i);
-        _renderBoard();
-        _renderStatus(i);
+        _renderBoard(i);
         _count++;
       }
+      _renderStatus(i);
     })
   }
   //END OF DISPLAY FUNCTIONALITY
