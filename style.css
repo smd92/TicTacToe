@@ -109,12 +109,17 @@ body {
     border-bottom: none;
   }
 
-  .hideGame {
+  .hide {
     visibility: hidden;
     z-index: -1000;
   }
 
-  #welcome {
+  .unhide {
+    visibility: visible;
+    z-index: 1000;
+  }
+
+  #step {
     font-size: 2em;
   }
 
@@ -134,4 +139,20 @@ body {
 
   #startButton:hover {
     cursor: pointer;
+    background-color: rgb(56, 46, 143);
+  }
+
+  .playerButton {
+    border: solid;
+    border-color: rgb(186, 252, 81);
+    margin: 1em;
+    padding: 1em;
+    text-align: center;
+    display: inline;
+    width: 40%;
+  }
+
+  .playerButton:hover {
+    cursor: pointer;
+    background-color: rgb(56, 46, 143);
   }

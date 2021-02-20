@@ -151,6 +151,35 @@ const gameFlow = (function() {
       _renderStatus(i);
     })
   }
+
+  const boardDiv = document.querySelector("#board");
+  const startButton = document.querySelector("#startButton");
+  const startGameDiv = document.querySelector("#startGame");
+  startButton.addEventListener(("click"), () => {
+    let step = document.querySelector("#step");
+    step.textContent = "Choose your enemy";
+    startButton.remove();
+
+    let humanButton = document.createElement("p");
+    humanButton.id = "humanButton";
+    humanButton.classList.add("playerButton");
+    humanButton.textContent = "Human";
+
+    let botButton = document.createElement("p");
+    botButton.id = "botButton";
+    botButton.classList.add("playerButton");
+    botButton.textContent = "Bot";
+
+    startGameDiv.appendChild(humanButton);
+    startGameDiv.appendChild(botButton);
+  })
+
+  let playerButtons = document.querySelectorAll(".playerButton");
+  for (let k = 0; k < playerButtons.length; k++) {
+    playerButtons[k].addEventListener(("click"), (e) => {
+      boardDiv.className = "unhide";
+    })
+  }
   //END OF DISPLAY FUNCTIONALITY
 })();
 
