@@ -22,6 +22,8 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     color: rgb(186, 252, 81);
+    align-items: center;
+    background-color: black;
   }
   
   #descr {
