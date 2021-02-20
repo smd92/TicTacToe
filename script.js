@@ -163,22 +163,30 @@ const gameFlow = (function() {
     let humanButton = document.createElement("p");
     humanButton.id = "humanButton";
     humanButton.classList.add("playerButton");
+    humanButton.classList.add("button");
     humanButton.textContent = "Human";
 
     let botButton = document.createElement("p");
     botButton.id = "botButton";
     botButton.classList.add("playerButton");
+    botButton.classList.add("button");
     botButton.textContent = "Bot";
 
     startGameDiv.appendChild(humanButton);
     startGameDiv.appendChild(botButton);
+    addPlayerButtonsEvent();
   })
 
-  let playerButtons = document.querySelectorAll(".playerButton");
-  for (let k = 0; k < playerButtons.length; k++) {
-    playerButtons[k].addEventListener(("click"), (e) => {
-      boardDiv.className = "unhide";
-    })
+  function addPlayerButtonsEvent() {
+    const playerButtons = document.querySelectorAll(".playerButton");
+    for (let k = 0; k < playerButtons.length; k++) {
+      playerButtons[k].addEventListener(("click"), (e) => {
+        step.remove();
+        humanButton.remove();
+        botButton.remove();
+        boardDiv.className = "unhide";
+      })
+    }
   }
   //END OF DISPLAY FUNCTIONALITY
 })();

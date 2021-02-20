@@ -131,11 +131,15 @@ body {
     place-items: center;
   }
 
-  #startButton {
+  .button {
     border: solid;
     border-color: rgb(186, 252, 81);
-    padding: 1em;
+    border-radius: 5px;
     text-align: center;
+    padding: 1em;
+  }
+
+  #startButton {
     width: 50%;
   }
 
@@ -145,11 +149,7 @@ body {
   }
 
   .playerButton {
-    border: solid;
-    border-color: rgb(186, 252, 81);
     margin: 1em;
-    padding: 1em;
-    text-align: center;
     display: inline;
     width: 40%;
   }
