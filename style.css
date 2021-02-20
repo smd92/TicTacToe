@@ -64,6 +64,7 @@ body {
     width: 10vw;
     height: 10vh;
     font-size: 4em;
+    visibility: inherit;
   }
 
   .field:hover {
@@ -75,6 +76,7 @@ body {
     place-content: center;
     width: 10vw;
     height: 10vh;
+    visibility: inherit;
   }
 
   .fadeMark {
@@ -105,4 +107,31 @@ body {
 
   #f6, #f7, #f8 {
     border-bottom: none;
+  }
+
+  .hideGame {
+    visibility: hidden;
+    z-index: -1000;
+  }
+
+  #welcome {
+    font-size: 2em;
+  }
+
+  #startGame {
+    display: grid;
+    grid-area: board;
+    place-items: center;
+  }
+
+  #startButton {
+    border: solid;
+    border-color: rgb(186, 252, 81);
+    padding: 1em;
+    text-align: center;
+    width: 50%;
+  }
+
+  #startButton:hover {
+    cursor: pointer;
   }
