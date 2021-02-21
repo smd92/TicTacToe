@@ -29,6 +29,10 @@ body {
   #descr {
     margin-left: 8%;
   }
+
+  #descr:hover {
+    cursor: pointer;
+  }
   
   #container {
     grid-area: container;
@@ -139,13 +143,13 @@ body {
     padding: 1em;
   }
 
-  #startButton {
-    width: 50%;
-  }
-
-  #startButton:hover {
+  .button:hover {
     cursor: pointer;
     background-color: rgb(56, 46, 143);
+  }
+
+  #startButton {
+    width: 50%;
   }
 
   .playerButton {
@@ -154,7 +158,6 @@ body {
     width: 40%;
   }
 
-  .playerButton:hover {
-    cursor: pointer;
-    background-color: rgb(56, 46, 143);
+  #submit {
+    width: 50%;
   }

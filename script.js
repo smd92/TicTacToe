@@ -152,21 +152,26 @@ const gameFlow = (function() {
     })
   }
 
+  const title = document.querySelector("#descr");
+  title.addEventListener(("click"), () => {
+    location.reload();
+  })
+
   const boardDiv = document.querySelector("#board");
   const startButton = document.querySelector("#startButton");
   const startGameDiv = document.querySelector("#startGame");
   startButton.addEventListener(("click"), () => {
-    let step = document.querySelector("#step");
+    const step = document.querySelector("#step");
     step.textContent = "Choose your enemy";
     startButton.remove();
 
-    let humanButton = document.createElement("p");
+    const humanButton = document.createElement("p");
     humanButton.id = "humanButton";
     humanButton.classList.add("playerButton");
     humanButton.classList.add("button");
     humanButton.textContent = "Human";
 
-    let botButton = document.createElement("p");
+    const botButton = document.createElement("p");
     botButton.id = "botButton";
     botButton.classList.add("playerButton");
     botButton.classList.add("button");
@@ -181,10 +186,27 @@ const gameFlow = (function() {
     const playerButtons = document.querySelectorAll(".playerButton");
     for (let k = 0; k < playerButtons.length; k++) {
       playerButtons[k].addEventListener(("click"), (e) => {
-        step.remove();
         humanButton.remove();
         botButton.remove();
-        boardDiv.className = "unhide";
+        step.textContent = "Please enter your names";
+
+        const pOne = document.createElement("p");
+        pOne.textContent = "Player 1:";
+        const pTwo = document.createElement("p");
+        pTwo.textContent = "Player 2:";
+        const submitButton = document.createElement("p");
+        submitButton.id = "submit";
+        submitButton.classList.add("button");
+        submitButton.textContent = "Submit";
+
+        startGameDiv.appendChild(pOne);
+        startGameDiv.appendChild(pTwo);
+        startGameDiv.appendChild(submitButton);
+
+        /*step.remove();
+        humanButton.remove();
+        botButton.remove();
+        boardDiv.className = "unhide";*/
       })
     }
   }
