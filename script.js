@@ -1,5 +1,5 @@
 //gameboard module
-const boardModule = (function() {
+const gameModule = (function() {
   let _boardArr = new Array("", "", "", "", "", "", "", "", "");
   
   function setBoard(mark, index) {
@@ -80,21 +80,26 @@ const boardModule = (function() {
       let checkTie = _boardArr.includes("");
        checkTie === false ? status = "tie" : status = "not over";
     }
-  
     return status;
+  }
+
+  function setPlayers(playerOneName, playerTwoName) {
+    Player1 = Player(1, playerOneName);
+    Player2 = Player(2, playerTwoName);
   }
 
   return {
     setBoard,
     getBoard,
-    getGameStatus
+    getGameStatus,
+    setPlayers
   }
 })();
 
 //factory function for players
 const Player = (slot, name) => {
   const mark = (slot === 1) ? "x" : "o";
-  const pushMarkToBoard = (index) => boardModule.setBoard(mark, index);
+  const pushMarkToBoard = (index) => gameModule.setBoard(mark, index);
 
   return {
     name,
@@ -103,28 +108,28 @@ const Player = (slot, name) => {
   }
 }
 
-//gameflow module
-const gameFlow = (function() {
-  let boardArr = boardModule.getBoard();
+//interface module
+const interfaceModule = (function() {
+  let boardArr = gameModule.getBoard();
   //DISPLAY FUNCTIONALITY
   //DOM render status to page
   function _renderStatus(index) {
     let statusDiv = document.querySelector("#status");
-    let status = boardModule.getGameStatus();
+    let status = gameModule.getGameStatus();
     switch (status) {
       case "x": 
-        statusDiv.textContent = "X wins!";
+        statusDiv.textContent = `${Player1.name} wins!`;
         break;
       case "o": 
-        statusDiv.textContent = "O wins!";
+        statusDiv.textContent = `${Player2.name} wins!`;
         break;
       case "tie":
         statusDiv.textContent = "It's a tie!";
         break;
       case "not over":
-        let boardArr = boardModule.getBoard();
+        let boardArr = gameModule.getBoard();
         let mark = boardArr[index];
-        mark === "x" ? statusDiv.textContent = "It's O's turn!" : statusDiv.textContent = "It's X's turn!";
+        mark === "x" ? statusDiv.textContent = `It's ${Player2.name}'s turn!` : statusDiv.textContent = `It's ${Player1.name}'s turn!`;
         break;
     }
   }
@@ -142,7 +147,7 @@ const gameFlow = (function() {
   const _fieldNodes = document.querySelectorAll(".field");
   for (let i = 0; i < _fieldNodes.length; i++) {
     _fieldNodes[i].addEventListener(("click"), (e) => {
-      let status = boardModule.getGameStatus();
+      let status = gameModule.getGameStatus();
       if (e.target.textContent === "" && status === "not over") {
         _count % 2 === 0 ? Player1.pushMarkToBoard(i) : Player2.pushMarkToBoard(i);
         _renderBoard(i);
@@ -152,14 +157,22 @@ const gameFlow = (function() {
     })
   }
 
+  //reload event on header text
   const title = document.querySelector("#descr");
   title.addEventListener(("click"), () => {
     location.reload();
   })
 
+  //DOM path from welcome screen to playing the game
   const boardDiv = document.querySelector("#board");
   const startButton = document.querySelector("#startButton");
   const startGameDiv = document.querySelector("#startGame");
+  const inputOne = document.createElement("input");
+  const inputTwo = document.createElement("input");
+  const submitButton = document.createElement("p");
+  let gameType;
+
+  //event behind the "Start Game" button
   startButton.addEventListener(("click"), () => {
     const step = document.querySelector("#step");
     step.textContent = "Choose your enemy";
@@ -182,36 +195,56 @@ const gameFlow = (function() {
     addPlayerButtonsEvent();
   })
 
+  //adds the player buttons for user choice: human or bot
   function addPlayerButtonsEvent() {
     const playerButtons = document.querySelectorAll(".playerButton");
     for (let k = 0; k < playerButtons.length; k++) {
       playerButtons[k].addEventListener(("click"), (e) => {
-        humanButton.remove();
-        botButton.remove();
-        step.textContent = "Please enter your names";
+        e.target.id === "humanButton" ? gameType = "humanGame" : gameType = "botGame";
+        step.textContent = "Please enter a name";
 
         const pOne = document.createElement("p");
         pOne.textContent = "Player 1:";
-        const pTwo = document.createElement("p");
-        pTwo.textContent = "Player 2:";
-        const submitButton = document.createElement("p");
+        startGameDiv.appendChild(pOne);
+        startGameDiv.appendChild(inputOne);
+
+        if (e.target.id === "humanButton") {
+          const pTwo = document.createElement("p");
+          pTwo.textContent = "Player 2:";
+          startGameDiv.appendChild(pTwo);
+          startGameDiv.appendChild(inputTwo);
+        }
+
         submitButton.id = "submit";
         submitButton.classList.add("button");
         submitButton.textContent = "Submit";
 
-        startGameDiv.appendChild(pOne);
-        startGameDiv.appendChild(pTwo);
-        startGameDiv.appendChild(submitButton);
-
-        /*step.remove();
         humanButton.remove();
         botButton.remove();
-        boardDiv.className = "unhide";*/
+
+        startGameDiv.appendChild(submitButton);
+        addSubmitButtonEvent();
       })
     }
+  }
+
+  function addSubmitButtonEvent() {
+    submitButton.addEventListener(("click"), () => {
+      let playerOneName = inputOne.value;
+      let playerTwoName;
+      gameType === "botGame" ? playerTwoName = "Bot" : playerTwoName = inputTwo.value;
+
+      if (playerOneName === "" || playerTwoName === "") {
+        alert("Please enter a name!");
+      } else {
+        gameModule.setPlayers(playerOneName, playerTwoName);
+        startGameDiv.remove();
+        boardDiv.className = "unhide";
+      }
+    })
   }
   //END OF DISPLAY FUNCTIONALITY
 })();
 
-const Player1 = Player(1, "SM");
-const Player2 = Player(2, "SMD");
+let Player1;
+let Player2;
