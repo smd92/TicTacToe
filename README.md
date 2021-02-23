@@ -5,6 +5,6 @@ This project is part of the curriculum at https://www.theodinproject.com/
 - module pattern
 - IIFE
 - recursion
-- how to create a very simple AI using Minimax Algorithm
+- how to create a very simple AI using Minimax algorithm
 # Live Demo
 https://smd92.github.io/TicTacToe
