@@ -44,7 +44,7 @@ body {
     grid-template-areas:
       ". status ."
       ". board ."
-      ". . .";
+      ". boardAction .";
     align-items: center;
     justify-items: center;
   }
@@ -62,6 +62,12 @@ body {
     height: 40vh;
     place-content: center;
   }
+
+  #boardAction {
+    grid-area: boardAction;
+    display: grid;
+    place-items: center;
+  }
   
   .field {
     display: grid;
@@ -77,6 +83,7 @@ body {
 
   .field:hover {
     background-color: rgb(56, 46, 143);
+    cursor: pointer;
   }
 
   .mark {
@@ -163,4 +170,12 @@ body {
   #submit {
     width: 50%;
     margin-top: 2em;
+  }
+
+  #restart {
+    width: 200%;
+  }
+
+  #easyButton, #hardButton {
+    width: 50%;
   }
