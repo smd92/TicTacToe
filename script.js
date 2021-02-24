@@ -1,7 +1,7 @@
 //gameboard module
-const gameModule = (function() {
+const gameModule = (function () {
   let _boardArr = new Array("", "", "", "", "", "", "", "", "");
-  
+
   function setBoard(mark, index) {
     if (_boardArr[index] === "") {
       _boardArr[index] = mark;
@@ -54,7 +54,7 @@ const gameModule = (function() {
     let diagonals = [diagonalA, diagonalB];
     return diagonals;
   }
-  
+
   function _getAll() {
     let rows = _getRows();
     let columns = _getColumns();
@@ -77,14 +77,14 @@ const gameModule = (function() {
     })
     let checkWinX = boardStringified.some((arr) => arr === winX);
     let checkWinO = boardStringified.some((arr) => arr === winO);
-  
+
     if (checkWinX === true) {
       status = "x";
     } else if (checkWinO === true) {
       status = "o";
     } else {
       let checkTie = _boardArr.includes("");
-       checkTie === false ? status = "tie" : status = "not over";
+      checkTie === false ? status = "tie" : status = "not over";
     }
     return status;
   }
@@ -110,11 +110,18 @@ const gameModule = (function() {
     } else if (gameType === "botGame" && difficulty === "easy") {
       _Player1.pushMarkToBoard(index);
       interfaceModule.renderBoard(index);
-
       let botIndex = Math.floor(Math.random() * (9 - 0) + 0);
       _easyBot(botIndex);
     } else if (gameType === "botGame" && difficulty === "hard") {
+      let mark;
+      _count % 2 === 0 ? mark = "x" : mark = "o";
+      _count % 2 === 0 ? _Player1.pushMarkToBoard(index) : _Player2.pushMarkToBoard(index);
+      _count++;
       
+      //_Player1.pushMarkToBoard(index);
+      interfaceModule.renderBoard(index);
+
+      _hardBot(mark);
     }
   }
 
@@ -127,6 +134,13 @@ const gameModule = (function() {
     }
     let newIndex = Math.floor(Math.random() * (9 - 0) + 0);
     _easyBot(newIndex);
+  }
+
+  //generate hard bot selection using minimax algorithm
+  function _hardBot(mark) {
+    let currBoard = minimaxModule.getCurrentBoardIndexed();
+    let bestChoice = minimaxModule.minimax(currBoard, mark);
+    console.log(bestChoice, mark);
   }
 
   function resetCount() {
@@ -157,8 +171,121 @@ function Player(slot, name) {
   };
 }
 
+//minimax module
+const minimaxModule = (function () {
+
+  //store the board’s current state in an array and define each mark's owner
+  function getCurrentBoardIndexed() {
+    let board = gameModule.getBoard();
+    let index = -1;
+    let indexedBoard = board.map((field) => {
+      index++;
+      if (field === "") {
+        return field = index;
+      } else {
+        return field;
+      }
+    })
+    return indexedBoard;
+  }
+
+  let currentBoardState = getCurrentBoardIndexed();
+  const humanMark = "x";
+  const botMark = "o";
+
+  //get the indexes of all the empty fields
+  function getEmptyFieldsIndexes(currBdSt) {
+    return currBdSt.filter(field => field != "x" && field != "o");
+  }
+
+  function determineWinner(currBdSt, currMark) {
+    if (
+      (currBdSt[0] === currMark && currBdSt[1] === currMark && currBdSt[2] === currMark) ||
+      (currBdSt[3] === currMark && currBdSt[4] === currMark && currBdSt[5] === currMark) ||
+      (currBdSt[6] === currMark && currBdSt[7] === currMark && currBdSt[8] === currMark) ||
+      (currBdSt[0] === currMark && currBdSt[3] === currMark && currBdSt[6] === currMark) ||
+      (currBdSt[1] === currMark && currBdSt[4] === currMark && currBdSt[7] === currMark) ||
+      (currBdSt[2] === currMark && currBdSt[5] === currMark && currBdSt[8] === currMark) ||
+      (currBdSt[0] === currMark && currBdSt[4] === currMark && currBdSt[8] === currMark) ||
+      (currBdSt[2] === currMark && currBdSt[4] === currMark && currBdSt[6] === currMark)
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  //the minimax algorithm
+  function minimax(currBdSt, currMark) {
+
+    //store indexes of all empty fields
+    const emptyFields = getEmptyFieldsIndexes(currBdSt);
+
+    //check if game is over
+    if (determineWinner(currBdSt, humanMark)) {
+      return {score: -1};
+    } else if (determineWinner(currBdSt, botMark)) {
+      return {score: 1};
+    } else if (emptyFields.length === 0) {
+      return {score: 0};
+    }
+
+    //store outcomes of test drives
+    const allTestPlays = [];
+
+    //loop through each empty field
+    for (let i = 0; i < emptyFields.length; i++) {
+      const currentTestPlay = {};
+
+      currentTestPlay.index = currBdSt[emptyFields[i]];
+      currBdSt[emptyFields[i]] = currMark;
+
+      if (currMark === botMark) {
+        const result = minimax(currBdSt, humanMark);
+        currentTestPlay.score = result.score
+      } else {
+        const result = minimax(currBdSt, botMark);
+        currentTestPlay.score = result.score;
+      }
+
+      //reset current board to pre test state
+      currBdSt[emptyFields[i]] = currentTestPlay.index;
+      allTestPlays.push(currentTestPlay);
+    }
+
+    let bestTestPlay = null;
+
+    if (currMark === botMark) {
+      let bestScore = -Infinity;
+      for (let i = 0; i < allTestPlays.length; i++) {
+        if (allTestPlays[i].score > bestScore) {
+          bestScore = allTestPlays[i].score;
+          bestTestPlay = i;
+        }
+      }
+    } else {
+      let bestScore = Infinity;
+      for (let i = 0; i < allTestPlays.length; i++) {
+        if (allTestPlays[i].score < bestScore) {
+          bestScore = allTestPlays[i].score;
+          bestTestPlay = i;
+        }
+      }
+    }
+
+    return allTestPlays[bestTestPlay];
+  }
+  //first invocation
+  const bestMove = minimax(currentBoardState, botMark);
+
+  return {
+    getCurrentBoardIndexed,
+    minimax
+  };
+})();
+
 //interface module
-const interfaceModule = (function() {
+const interfaceModule = (function () {
   let boardArr = gameModule.getBoard();
   //DOM render status to page
   function _renderStatus(index) {
@@ -176,11 +303,11 @@ const interfaceModule = (function() {
 
     let status = gameModule.getGameStatus();
     switch (status) {
-      case "x": 
+      case "x":
         statusDiv.textContent = `${Player1.name} wins!`;
         _addRestartButton();
         break;
-      case "o": 
+      case "o":
         statusDiv.textContent = `${Player2.name} wins!`;
         _addRestartButton();
         break;
@@ -227,7 +354,7 @@ const interfaceModule = (function() {
   function _resetFields() {
     for (let i = 0; i < _fieldNodes.length; i++) {
       _fieldNodes[i].firstElementChild.textContent = "";
-      _fieldNodes[i].firstElementChild.classList.remove("fadeMark"); 
+      _fieldNodes[i].firstElementChild.classList.remove("fadeMark");
     }
   }
 
@@ -279,20 +406,20 @@ const interfaceModule = (function() {
     humanButton.addEventListener(("click"), () => {
       gameType = "humanGame";
       step.textContent = "Please enter a name";
-  
+
       const pOne = document.createElement("p");
       pOne.textContent = "Player 1:";
       startGameDiv.appendChild(pOne);
       startGameDiv.appendChild(inputOne);
-  
+
       const pTwo = document.createElement("p");
       pTwo.textContent = "Player 2:";
       startGameDiv.appendChild(pTwo);
       startGameDiv.appendChild(inputTwo);
-  
+
       humanButton.remove();
       botButton.remove();
-  
+
       _setSubmitButton();
       startGameDiv.appendChild(submitButton)
       _addSubmitButtonEvent();
