@@ -113,15 +113,16 @@ const gameModule = (function () {
       let botIndex = Math.floor(Math.random() * (9 - 0) + 0);
       _easyBot(botIndex);
     } else if (gameType === "botGame" && difficulty === "hard") {
-      let mark;
-      _count % 2 === 0 ? mark = "x" : mark = "o";
-      _count % 2 === 0 ? _Player1.pushMarkToBoard(index) : _Player2.pushMarkToBoard(index);
-      _count++;
-      
-      //_Player1.pushMarkToBoard(index);
-      interfaceModule.renderBoard(index);
+      let currentBoard = minimaxModule.getCurrentBoardIndexed();
 
-      _hardBot(mark);
+      _Player1.pushMarkToBoard(index);
+      interfaceModule.renderBoard(index);
+      minimaxModule.minimax(currentBoard, _Player1.mark);
+
+      currentBoard = minimaxModule.getCurrentBoardIndexed();
+      let bestChoice = minimaxModule.minimax(currentBoard, _Player2.mark);
+      _Player2.pushMarkToBoard(bestChoice.index);
+      interfaceModule.renderBoard(bestChoice.index);
     }
   }
 
@@ -134,13 +135,6 @@ const gameModule = (function () {
     }
     let newIndex = Math.floor(Math.random() * (9 - 0) + 0);
     _easyBot(newIndex);
-  }
-
-  //generate hard bot selection using minimax algorithm
-  function _hardBot(mark) {
-    let currBoard = minimaxModule.getCurrentBoardIndexed();
-    let bestChoice = minimaxModule.minimax(currBoard, mark);
-    console.log(bestChoice, mark);
   }
 
   function resetCount() {
@@ -223,11 +217,11 @@ const minimaxModule = (function () {
 
     //check if game is over
     if (determineWinner(currBdSt, humanMark)) {
-      return {score: -1};
+      return { score: -1 };
     } else if (determineWinner(currBdSt, botMark)) {
-      return {score: 1};
+      return { score: 1 };
     } else if (emptyFields.length === 0) {
-      return {score: 0};
+      return { score: 0 };
     }
 
     //store outcomes of test drives
@@ -334,8 +328,10 @@ const interfaceModule = (function () {
   function renderBoard(index) {
     let selector = "#f" + index;
     let boardField = document.querySelector(selector);
-    boardField.firstElementChild.classList.add("fadeMark");
-    boardField.firstElementChild.textContent = boardArr[index];
+    if (boardField != null) {
+      boardField.firstElementChild.classList.add("fadeMark");
+      boardField.firstElementChild.textContent = boardArr[index];
+    }
   }
 
   //DOM click event for gameboard fields
